@@ -1,0 +1,36 @@
+---
+- name: Practica de tareas asincronas
+  hosts: target1
+  vars:
+    tiempo_espera: 10
+    sleeper_file: "{{ lookup('file', '{{ ruta }}') }}"
+  tasks: 
+  - name: La hora es
+    command: date
+    register: hora
+  - debug: var=hora.stdout
+
+  - name: Esperando
+    shell: "sleep {{ tiempo_espera }}"
+    async: 15 #La tarea no debeía de tardar mas de 45 segundos
+#    poll: 10 #Cada 10 segundos me conecto y compruebo. Esto es para que no se nos cierre la conexión ssh y rompa el script.
+    poll: 0
+#Le decimos que lance el proceso en la maquina y q no espere q siga avanzando 
+    register: sleeper #Debemos registrarlo para la tarea de comprobacion del Pool=0
+  
+  - name: La hora es
+    command: date
+    register: hora
+  - debug: var=hora.stdout
+
+  - name: Comprobar que la tarea Pool=0 se hizo correctamente
+    async_status:
+      jid: "{{ sleeper.ansible_job_id }}"
+    register: resultado_sleep
+    until: resultado_sleep.finished #Registro el resultado hasta que termine la tarea Pool=0
+    retries: 30 #Comprobaciones de finalización. Si despues de las 30 comprobaciones no acabo
+
+  - name: Mostrar información del guardado del sleeper
+    shell: "cat {{ sleeper.results_file }}"
+    register: salida 
+  - debug:  var=salida
