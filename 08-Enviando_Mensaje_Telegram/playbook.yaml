@@ -1,0 +1,8 @@
+---
+- name: Mandar un mensaje por telegram
+  hosts: localhost
+  tasks:
+  - telegram:
+      token: '602806199:AAGvtLpZ9OlzXQ3ZcxBJfNdK_si5c0R2bZU'
+      chat_id: 175450295
+      msg: "Ansible task finished"
