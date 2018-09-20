@@ -1,0 +1,1 @@
+Para trabajar con contraseñas en vault utilizamos el comando nsible-vault encrypt claves. Siendo claves el archivo con las variables
