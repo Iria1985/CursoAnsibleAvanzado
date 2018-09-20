@@ -1,0 +1,15 @@
+---
+- hosts: DBServers
+  tasks:
+    - debug:
+        msg: "antes de common (databases)"
+    - import_role:
+        name: common
+    - debug:
+        msg: "despues de common y antes de mysql"
+    - include_role:
+        name: mysql
+      vars:
+        mysqlrolevar: 1
+    - debug:
+        msg: "despues de mysql"

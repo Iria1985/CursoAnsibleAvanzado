@@ -1,0 +1,17 @@
+---
+- name: desplegar aplicacion
+  hosts: all
+  vars_prompt:
+  - name: mysql_user
+    prompt: "Nombre de usuario para la BBDD: "
+    default: psa
+    private: no
+  vars:
+  - mysql_pass: "{{ lookup('password', 'roles/mysql/passwords/' + mysql_user + '/mysqlpassword chars=ascii_letters,digits,hexdigits,punctuation length=8') }}"
+
+  tasks:
+  - set_fact: 
+      mysql_user: "{{ mysql_user }}"
+      mysql_pass: "{{ mysql_pass }}"
+- import_playbook: databaseserver.yml
+- import_playbook: webservers.yml

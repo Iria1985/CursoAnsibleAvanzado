@@ -1,0 +1,15 @@
+---
+- hosts: Webservers
+  tasks:
+  - debug:
+      msg: "antes de common"
+  - import_role:
+      name: common
+  - debug:
+      msg: "despues de common y antes de web"
+  - include_role:
+      name: web
+    vars:
+      webrolevar: 1
+  - debug:
+      msg: "despues de web"

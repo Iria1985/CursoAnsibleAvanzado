@@ -1,0 +1,2 @@
+app: miapp
+dest_pass: roles/mysql/passwords/

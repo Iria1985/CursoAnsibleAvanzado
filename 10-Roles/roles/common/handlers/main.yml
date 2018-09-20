@@ -1,0 +1,7 @@
+---
+# handlers file for common
+- name: reiniciar ntp
+  service:
+    name: ntp
+    state: restarted
+

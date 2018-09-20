@@ -1,0 +1,47 @@
+---
+- name: Instalar MySQL
+  apt:
+    name:
+    - python-mysqldb
+    - mysql-server
+    - php-mysql
+    state: present
+
+- name: Permitir conexiones desde todas las redes
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    state: present
+    regexp: '.*bind-address.*'
+    line: '#bind-address            = 127.0.0.1'
+  notify: reiniciar mysql
+
+- name: Copiar dump Base de datos
+  copy:
+    src: miapp.sql
+    dest: /tmp/miapp.sql
+
+- name: Crear base de datos
+  mysql_db:
+    name: "{{ app }}"
+    state: present
+
+- name: Crear usuario base de datos
+  mysql_user:
+     name: "{{ mysql_user }}"
+     state: present
+     priv: 'miapp.*:ALL'
+     host: "%" 
+     password: "{{ mysql_pass }}"
+
+- name: Comprobar si ya tenemos tabla y datos
+  shell: "echo 'select count(*) from usuarios' |mysql miapp "
+  register: salida_mysql
+  failed_when: false
+  changed_when: false
+
+- name: Importar base de datos
+  mysql_db:
+    name: "{{ app }}"
+    state: import
+    target: /tmp/miapp.sql
+  when: salida_mysql.rc != 0 or salida_mysql.stdout == "0"
