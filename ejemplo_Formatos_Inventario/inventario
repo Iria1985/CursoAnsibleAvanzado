@@ -1,22 +1,3 @@
-[Master]
-10.0.2.15
-
-[Clones]
-10.0.2.4 ansible_ssh_pass=psa123
-10.0.2.5 ansible_ssh_pass=psa123
-
-[ejemplo1]
-yval[012:013]0
-
-[local]
-#localhost ansible_connection=local ansible_user=root ansible_become=True mivariable=mivalor
-localhost
-
-[local:vars]
-ansible_connection=local
-ansible_user=root
-ansible_become=True
-mivariable=mivalor
 [servidores]
 servidor1
 servidor2
@@ -45,3 +26,28 @@ pc3
 [linux:children]
 debian
 ubuntu
+
+[local]
+#localhost ansible_connection=local ansible_user=root ansible_become=True mivariable=mivalor
+localhost
+
+[local:vars]
+ansible_connection=local
+ansible_user=root
+ansible_become=True
+mivariable=mivalor
+
+#dos maneras de hacer lo mismo
+[ejemplo1]
+yval0120
+yval0130
+yval0140
+yval0150
+yval0160
+yval0170
+yval0180
+yval0190
+
+[ejemplo1]
+yval[012:013]0
+
