@@ -1,0 +1,6 @@
+[Master]
+10.0.2.15
+
+[Clones]
+10.0.2.4 ansible_ssh_pass=psa123
+10.0.2.5 ansible_ssh_pass=psa123
