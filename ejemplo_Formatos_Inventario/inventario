@@ -51,3 +51,7 @@ yval0190
 [ejemplo1]
 yval[012:013]0
 
+
+[op]
+#mipc ansible_become_exe=/usr/bin/op
+

@@ -1,7 +1,7 @@
 
 ---
 - name: Desplegar LAMP
-  hosts: target2
+  hosts: Slaves
   vars:
   - app: miapp
   - web_url: http://www.inetutil.info/psa/miapp.tar.bz
