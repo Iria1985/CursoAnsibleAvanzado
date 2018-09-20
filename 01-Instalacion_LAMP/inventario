@@ -7,6 +7,3 @@ master ansible_connection=local
 
 [all:vars]
 ansible_become=True
-
-[op]
-#mipc ansible_become_exe=/usr/bin/op
