@@ -1,0 +1,199 @@
+
+---
+- name: Desplegar LAMP
+  hosts: target2
+  vars:
+  - app: miapp
+  - web_url: http://www.inetutil.info/psa/miapp.tar.bz
+  - http_port: 80
+  - webserver_hostname: miservidor
+  - mysql_user: psa
+  - mysql_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+  - destino_web: /var/www/html
+  - path_origen: /home/psa/ansible/martes
+  - apache_conf: /etc/apache2/sites-enabled/000-default.conf
+  vars_prompt:
+  - name: webserver_admin
+    promt: "Quien va a gestionar este servidor (email):"
+    default: iria.rodriguez@ext.mpsa.om
+
+  tasks:
+#Opción 1
+#  - name: Instalar Apache
+#    apt: name=apache2 state=present
+#    tags: 
+#    - setup
+#    - apache
+#  - name: Instalar Mysql
+#    apt: name=mysql-server state=present
+#    tags 
+#    - setup
+#    - mysql
+#
+#Opción 2
+#  - name: Instalar Apache y Mysql
+#    apt: name={{ item }} state=present
+#    loop:
+#      - apache2
+#      - mysql-server
+#      - libapache2-mod-php
+#      - python-mysqldb
+#      - php-mysql
+#    notify: reiniciar apache
+#    tags: 
+#    - setup
+#    - apache
+#    - mysql
+#
+#Opción 3
+  - name: Instalar Apache y Complementos
+    apt: name={{ item }} state=present
+    loop:
+    - apache2
+    - libapache2-mod-php
+    notify: reiniciar apache
+    tags:
+    - setup
+    - apache
+
+  - name: Instalar MySQL y Complementos
+    apt: name={{ item }} state=present
+    loop: 
+    - mysql-server
+    - python-mysqldb
+    - php-mysql
+    tags:
+    - setup
+    - mysql
+
+  - name: Cambiando archivo configuración de Apache
+    lineinfile:
+      path: "{{ apache_conf }}"
+      state: present
+      regexp: ".*ServerName.*"
+      line: "	ServerName {{ webserver_hostname }}"
+    notify: reiniciar apache
+    tags: 
+    - setup
+    - apache
+
+  - name: Cambiando archivo configuración de Apache
+    lineinfile:
+      path: "{{ apache_conf }}"
+      state: present
+      regexp: ".*ServerAdmin.*"
+      line: "	ServerAdmin {{ webserver_admin }}"
+    notify: reiniciar apache
+    tags: 
+    - setup
+    - apache
+
+  - name: copiar dump de la bbdd
+    copy: src="{{ path_origen }}/miapp.sql" dest=/tmp/miapp.sql
+    tags: 
+    - setup
+    - mysql
+
+  - name: Crear pagina web
+    template:
+      src: "{{ path_origen }}/index.html.j2"
+      dest: "{{ destino_web }}/index.html"
+      owner: www-data
+      mode: 0644
+    tags: 
+    - web
+
+  - name: Crear bbdd "{{ app }}"
+    mysql_db:
+      name: "{{ app }}"
+      state: present
+    tags: 
+    - mysql
+    - web
+
+  - name: Comprobar si tenemos tabla y datos
+    shell: "echo 'select count(*) from usuarios' |mysql --skip-column-names miapp"
+    register: salida_mysql
+    failed_when: false #indica que nunca falla
+    changed_when: false #nunca va a cambiar nada
+    tags: 
+    - mysql
+    - web
+  - debug: var=salida_mysql
+  
+  - name: Import file.sql 
+    mysql_db:
+      state: import
+      name: "{{ app }}"
+      target: "/tmp/{{ app }}.sql"
+    when: salida_mysql.rc != 0 or salida_mysql.stdout == "0"
+    tags: 
+    - web
+    - mysql
+
+  - name: Creacion usuario bbdd
+    mysql_user:
+      name: "{{ mysql_user }}"
+      password: "{{ mysql_pass }}"       
+      priv: 'miapp.*:ALL'
+      state: present
+    tags:
+    - mysql
+    - web
+    - deberes
+  - debug: 
+      msg: 'Su Password es: {{ mysql_pass }}'
+    tags:
+    - deberes
+
+  - name: Descargar web
+    get_url:
+      url: "{{ web_url }}"
+      dest: "{{ path_origen }}/"
+    delegate_to: master
+    tags:
+    - web
+
+  - name: Descomprimir pagina web situado en master en el equipo remoto
+    unarchive:
+      src: "{{ path_origen }}/miapp.tar.bz"
+      dest: "{{ destino_web }}/"
+    register: salida_unarchive
+    tags:
+    - web
+  - debug: var=salida_unarchive
+
+  - name: Eliminación de temporales
+    file:
+      path: "{{ path_origen }}/miapp.tar.bz"
+      state: absent   
+    delegate_to: master
+    tags:
+    - web
+
+  - name: Configurar la bbdd en la aplicación
+    lineinfile:
+      dest: "{{ destino_web}}/config.php"
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.reemplazo }}"
+      state: present
+    loop:
+    - { regexp: '\$username.*=.*', reemplazo: '$username = "{{ mysql_user }}";' }
+    - { regexp: '\$password.*=.*', reemplazo: '$password = "{{ mysql_pass }}";' }
+    - { regexp: '\$dbname.*=.*', reemplazo: '$dbname = "{{ app }}";' }
+    tags:
+    - web
+    - deberes
+
+  - name: Eliminación index.html
+    file:
+      path: "{{ destino_web }}/index.html"
+      state: absent
+    notify: reiniciar apache
+    tags: 
+    - web
+
+  handlers: 
+  - name: reiniciar apache
+    service: name=apache2 state=restarted
+
