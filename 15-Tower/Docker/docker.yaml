@@ -1,0 +1,27 @@
+---
+- hosts: [ target1, target2, localhost ] 
+  connection: local
+  tasks:
+
+  - name: Add current user to Docker group
+    user: name=psa groups=docker append=yes
+
+  - name: Creation Proxy PSA Docker Directory
+    file: path="{{item}}" state=directory
+    with_items:
+    - /etc/systemd/system/docker.service.d
+
+  - name: Ansible create Proxy file for Docker
+    copy:
+      dest: "/etc/systemd/system/docker.service.d/proxy.conf"
+      content: |
+        [Service]
+        Environment="HTTP_PROXY=http://F172304:aR8s3bes@http.internetpsa.inetpsa.com:80" "NO_PROXY=.inetpsa.com,localhost,127.0.0.1"
+        Environment="HTTPS_PROXY=http://F172304:aR8s3bes@http.internetpsa.inetpsa.com:80" "NO_PROXY=.inetpsa.com,localhost,127.0.0.1"
+
+  - name: Daemon reload
+    shell: "systemctl daemon-reload"
+
+  - name: Restart Docker
+    service: name=docker state=restarted
+
