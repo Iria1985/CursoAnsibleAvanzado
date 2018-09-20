@@ -20,7 +20,6 @@
     rescue:
       - name: Tareas que corrigen el error
         debug: msg="Fallo alguna tarea, pero lo voy a arreglar"
-#      - debug: msg="La tarea que fallo es -> {{ ansible_failed_task.name }}" #Te da información sobre el nombre de la tarea que fallo 
       - debug: msg="La tarea que fallo es -> {{ ansible_failed_task }}" #Te da toda la información sobre el fallo
       - assert: { that: false } #Obliga a fallar al rescue. Esto sirve para que si ha fallado no siga ejecutando el playbook en los clientes en los que falló, pero si en el resto.
     when: "'target' in inventory_hostname"
