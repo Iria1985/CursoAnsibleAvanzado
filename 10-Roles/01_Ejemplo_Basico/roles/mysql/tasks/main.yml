@@ -1,0 +1,46 @@
+---
+# tasks file for mysql
+- name: Instalar MySQL y Complementos
+  apt: name={{ item }} state=present
+  loop:
+  - mysql-server
+  - python-mysqldb
+
+- name: copiar dump de la bbdd
+  copy: src="{{ path_origen }}/miapp.sql" dest=/tmp/miapp.sql
+
+- name: Crear bbdd "{{ app }}"
+  mysql_db:
+    name: "{{ app }}"
+    state: present
+
+- name: Comprobar si tenemos tabla y datos
+  shell: "echo 'select count(*) from usuarios' |mysql --skip-column-names miapp"
+  register: salida_mysql
+  failed_when: false
+  changed_when: false
+
+- name: Import file.sql
+  mysql_db:
+    state: import
+    name: "{{ app }}"
+    target: "/tmp/{{ app }}.sql"
+  when: salida_mysql.rc != 0 or salida_mysql.stdout == "0"
+
+- name: Creacion usuario bbdd
+  mysql_user:
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_pass }}"
+    priv: 'miapp.*:ALL'
+    host: "10.0.2.4" #Accedo desde mi apache por eso esta ip.
+    state: present
+  register: salida_mysql_user
+
+- name: Configurar el archivo mysql.cnf
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.reemplazo }}"
+    state: present
+  loop:
+  - { regexp: '^bind-address', reemplazo: '#bind-address = "0.0.0.0" '}

@@ -1,0 +1,8 @@
+---
+# vars file for common
+ntp_servers: 
+- 10.82.161.3
+- 10.68.161.3
+
+origen_template: ../templates
+destino_ntp: /etc/ntp.conf

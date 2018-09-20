@@ -1,0 +1,10 @@
+---
+# vars file for web
+app: miapp
+web_url: http://www.inetutil.info/psa/miapp.tar.bz
+http_port: 80
+webserver_hostname: miservidor
+destino_web: /var/www/html
+path_origen: roles/web/templates
+apache_conf: /etc/apache2/sites-enabled/000-default.conf
+webserver_admin: iria.rodriguez@ext.mpsa.com

@@ -1,0 +1,4 @@
+- hosts: DBServers 
+  roles:
+  - common
+  - mysql

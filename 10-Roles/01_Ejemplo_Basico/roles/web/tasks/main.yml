@@ -1,0 +1,68 @@
+---
+# tasks file for web
+- name: Instalar Apache y Complementos
+  apt: name={{ item }} state=present
+  loop:
+  - apache2
+  - libapache2-mod-php
+  notify: reiniciar apache
+
+- name: Cambiando archivo configuración de Apache
+  lineinfile:
+    path: "{{ apache_conf }}"
+    state: present
+    regexp: ".*ServerName.*"
+    line: "   ServerName {{ webserver_hostname }}"
+  notify: reiniciar apache
+
+- name: Cambiando archivo configuración de Apache
+  lineinfile:
+    path: "{{ apache_conf }}"
+    state: present
+    regexp: ".*ServerAdmin.*"
+    line: "   ServerAdmin {{ webserver_admin }}"
+  notify: reiniciar apache
+
+- name: Crear pagina web
+  template:
+    src: "{{ path_origen }}/index.html.j2"
+    dest: "{{ destino_web }}/index.html"
+    owner: www-data
+    mode: 0644
+
+- name: Descargar web
+  get_url:
+    url: "{{ web_url }}"
+    dest: "{{ path_origen }}/"
+  delegate_to: master
+
+- name: Descomprimir pagina web situado en master en el equipo remoto
+  unarchive:
+    src: "{{ path_origen }}/miapp.tar.bz"
+    dest: "{{ destino_web }}/"
+  register: salida_unarchive
+
+- name: Eliminación de temporales
+  file:
+    path: "{{ path_origen }}/miapp.tar.bz"
+    state: absent
+  delegate_to: master
+
+- name: Eliminación index.html
+  file:
+    path: "{{ destino_web }}/index.html"
+    state: absent
+  notify: reiniciar apache
+
+- name: Configurar la bbdd en la aplicación
+  lineinfile:
+    dest: "{{ destino_web}}/config.php"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.reemplazo }}"
+    state: present
+  loop:
+  - { regexp: '\$username.*=.*', reemplazo: '$username = "{{ mysql_user }}";' }
+  - { regexp: '\$password.*=.*', reemplazo: '$password = "{{ mysql_pass }}";' }
+  - { regexp: '\$dbname.*=.*', reemplazo: '$dbname = "{{ app }}";' }
+  - { regexp: '^\$servername = "localhost";', reemplazo: '$servername = "10.0.2.5";' }
+  notify: reiniciar apache

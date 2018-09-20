@@ -1,0 +1,9 @@
+---
+# vars file for mysql
+path_origen: ../../web/files
+app: miapp
+webserver_hostname: miservidor
+#mysql_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+mysql_user: psa
+mysql_pass: "{{ lookup('password', '../../../pass/passwordfile chars=ascii_letters,digits,hexdigits,punctuation') }}"
+destino_web: /var/www/html

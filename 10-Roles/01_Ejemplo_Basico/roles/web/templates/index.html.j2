@@ -1,0 +1,11 @@
+<html>
+  <head>
+    <title>Pagina inicial de {{ ansible_hostname  }} </title>
+  </head>
+  <body>
+    <h1> Bienvenido a {{ ansible_hostname }} </h1> <p>
+         Sistema Operativo {{ ansible_distribution }} {{ansible_distribution_release }} <br/>
+         IP principal {{ ansible_default_ipv4.address }} <br/>
+         Fecha de creacion web {{ ansible_date_time.iso8601 }} <br/>
+  </body>
+</html>

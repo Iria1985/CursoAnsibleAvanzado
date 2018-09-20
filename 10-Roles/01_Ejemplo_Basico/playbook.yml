@@ -1,0 +1,15 @@
+---
+- name: Desplegar la aplicacion
+  hosts: all
+  vars_prompt: 
+  - name: "mysql_user"
+    prompt: "Nombre del usuario BBDD"
+    default: "iria.rodriguez@ext.mpsa.com"
+    private: no
+  tasks:
+  - set_fact:
+      mysql_user: "{{ mysql_user }}"
+  - debug: msg="{{ mysql_user }}"
+
+- import_playbook: databaseservers.yml
+- import_playbook: webservers.yml
