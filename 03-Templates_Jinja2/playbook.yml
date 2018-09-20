@@ -2,7 +2,7 @@
 - name: Test 1 de Jinja
   vars:
   - nombre_bloques: [ "master", "slave" ]
-  - destino: /home/psa/ansible/miercoles
+  - destino: ./
   hosts: localhost
   connection: local
   tasks:

@@ -1,7 +1,7 @@
 
 ---
 - name: Desplegar LAMP
-  hosts: Slaves
+  hosts: target1
   vars:
   - app: miapp
   - web_url: http://www.inetutil.info/psa/miapp.tar.bz
@@ -10,7 +10,7 @@
   - mysql_user: psa
   - mysql_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
   - destino_web: /var/www/html
-  - path_origen: /home/psa/ansible/martes
+  - path_origen: ./
   - apache_conf: /etc/apache2/sites-enabled/000-default.conf
   vars_prompt:
   - name: webserver_admin
