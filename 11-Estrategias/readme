@@ -1,0 +1,17 @@
+Por defecto se ejecutan el playbook por tareas, esperando unos hosts por los otros.
+
+hosts: all
+strategy: free
+tasks:
+
+Podemos cambiar estas estrategias. Para ello podemos usar "ansible-docs -t strategy -l" para ver que estrategias tenemos.
+Estrategia por defecto: misma tarea en todos los servidores y se ejecutan de 5 en 5. 
+
+Para poder ejecutarlo para que vayan todos segun su ritmo sin esperarse utilizamos "straetgy: free"
+Aplicar playbook de manera serial: todo el playbook a una maquina y desues a otra y despues a otra
+
+hosts: all
+serial: 1 #De uno en uno
+tasks:
+
+

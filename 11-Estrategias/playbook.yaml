@@ -1,0 +1,29 @@
+---
+- name: Ejecutar cosas y arreglar posibles fallos
+  hosts: all
+  tasks:
+  - name: Tarea fuera del bloque
+    debug: msg="Iniciamos el play"
+
+  - name: Bloque con varias tareas
+    block: 
+    - name: Tarea interna del bloque
+      debug: msg="Solo me ejecuto en targets"
+    - name: Segunda tarea
+      shell: 'cat /etc/hostname'
+      changed_when: false
+    - name: Tarea que falla
+      command: /bin/false
+    - name: Final del bloque
+      debug: msg="Acabamos aqui"
+    #Si falla ejecuto el rescue. Si falla en alguna tarea del bloque no ejecuta las restantes dentro del bloque, va directo al rescue.
+    rescue:
+      - name: Tareas que corrigen el error
+        debug: msg="Fallo alguna tarea, pero lo voy a arreglar"
+#      - debug: msg="La tarea que fallo es -> {{ ansible_failed_task.name }}" #Te da información sobre el nombre de la tarea que fallo 
+      - debug: msg="La tarea que fallo es -> {{ ansible_failed_task }}" #Te da toda la información sobre el fallo
+      - assert: { that: false } #Obliga a fallar al rescue. Esto sirve para que si ha fallado no siga ejecutando el playbook en los clientes en los que falló, pero si en el resto.
+    when: "'target' in inventory_hostname"
+    #Si el rescue no falla, continua ejecutando el playbook.
+  - name: Ya no estamos en el bloque
+    debug: msg="Fuera del bloque"
