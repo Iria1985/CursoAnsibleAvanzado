@@ -1,0 +1,12 @@
+---
+- name: Test 1 de Jinja
+  vars:
+  - nombre_bloques: [ "master", "slave" ]
+  - destino: /home/psa/ansible/miercoles
+  hosts: localhost
+  connection: local
+  tasks:
+  - name: Instanciar un template
+    template:
+     src: template.j2
+     dest: "{{ destino }}/config.final"
