@@ -1,0 +1,17 @@
+---
+- name: Bloques y handlers
+  hosts: all
+  tasks:
+   - name: Attempt and graceful roll back demo
+     block:
+     - debug:
+         msg: 'I execute normally'
+       notify: run me even after an error #Al romper no ejecuta el notify
+     - command: /bin/false
+     rescue:
+     - name: make sure all handlers run
+      meta: flush_handlers #Para que coga el notify
+   handlers:
+   - name: run me even after an error
+     debug:
+       msg: 'This handler runs even on error'
