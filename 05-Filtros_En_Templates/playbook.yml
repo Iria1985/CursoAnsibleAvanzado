@@ -1,0 +1,17 @@
+---
+- name: Jugando con Filtros
+  hosts: localhost
+  connection: local
+  vars:
+  - path: ./
+  tasks:
+  - name: Instancias un template
+    template:
+      src: "{{ path }}/plantilla.j2"
+      dest: "{{ path }}/informe.final"
+  - debug: msg="{{ lookup('template', 'plantilla.j2')}}" #Con esto puedo ver la plantilla jinja2 generada a través de un mensaje de debug. De esta forma se ve feo.
+  - debug: msg="{{ lookup('template', 'plantilla.j2').split('\n') }}" #Lo mismo que antes pero con salida mas legible.
+ 
+#Para evaluar variables y convertirlas o añadirles cosas 
+  - sect_fact:
+    variable: "{{lookup('template', 'plantilla.j2') }}"

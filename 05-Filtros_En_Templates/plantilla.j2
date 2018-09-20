@@ -1,0 +1,9 @@
+#Template para visualizar /etc/motd
+
+Bienvnido a {{ ansible_hostname |upper }}
+IP: {{ ansible_default_ipv4.address }}
+Fecha de creacion de motd: {{ ansible_date_time.iso8601 }}
+Distribucion: {{ ansible_distribution }} {{ ansible_distribution_release }}
+Responsable: {{ responsable | default("iria.rodriguez@ext.mpsa.com")}}
+
+
