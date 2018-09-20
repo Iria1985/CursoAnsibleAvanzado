@@ -10,7 +10,7 @@
   - mysql_user: psa
   - mysql_pass: psa123
   - destino_web: /var/www/html
-  - path_origen: /home/psa/ansible/martes
+  - path_origen: ./
   - apache_conf: /etc/apache2/sites-enabled/000-default.conf
   vars_prompt:
   - name: webserver_admin
