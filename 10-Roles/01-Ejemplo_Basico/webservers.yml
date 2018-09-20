@@ -1,7 +1,0 @@
----
-- hosts: Webservers
-  tasks: 
-  - import_role: name=common
-  - include_role: name=web
-    vars: #Esta variable esta dentro del include rol
-      web_role_var: 1
