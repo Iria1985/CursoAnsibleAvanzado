@@ -1,0 +1,14 @@
+#Template para mostrar información.
+
+{% for item in sistemas %}
+
+Sistema: {{ item.nombre }}
+{% if item.nombre == 'sistema3' %}
+Ubicacion: secreto
+{% else %}
+Ubicacion: {{ item.ubicacion }}
+{% endif %}
+Sistema Operativo: {{ item.sistema_operativo }}
+
+{% endfor %}
+

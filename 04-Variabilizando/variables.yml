@@ -1,0 +1,33 @@
+---
+#Fichero de variables
+
+variable1: valor1
+
+#Lista de colores llamada "colores"
+colores:
+- rojo
+- amarillo
+- verde
+
+#Otra manera de hacer arrays
+frutas: [ 'manzana', 'pera', 'ciruela' ]
+
+#Diccionario de elementos llamado "sistemas1". Tenemos clave y valor para cada uno de los sistemas.
+
+sistema1:
+  ubicacion: sala1
+  sistema_operativo: linux
+
+#Array con 2 diccionarios diferentes.
+sistema2:
+- ubicacion: sala2
+- sistema_operativo: windows
+
+#Lista de dos sistemas, una en formato compacto y otra no.
+sistemas:
+- nombre: sistema3
+  ubicacion: sala1
+  sistema_operativo: vmware
+
+- { nombre: sistema4 , ubicacion: sala2, sistema_operativo: hpux }
+

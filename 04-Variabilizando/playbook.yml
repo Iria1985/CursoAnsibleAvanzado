@@ -1,0 +1,20 @@
+---
+- name: Ver mis variables
+  hosts: localhost
+  vars:
+  - path_variables: ./
+  tasks:
+  - name: cargar fichero de variables
+    include_vars: file="{{ path_variables }}/variables.yml"
+  - debug: var=frutas #Todo el array de frutas
+  - debug: var=colores[0] #Solo posición 1 del array
+  - debug: var=colores #Todo el array de colores
+  - debug: var=sistema1 #Todo el sistema
+  - debug: var=sistema1.sistema_operativo #Solo sistema_operativo dentro del array
+  - debug: var=sistema2 #Llamo a todo el array que contiene 2 diccionarios
+  - debug: var=sistemas #Llamo a todo el array
+
+  - name: Crear template jinja2
+    template:
+      src: "{{ path_variables }}/plantilla.j2"
+      dest: "{{ path_variables }}/informe.final"
