@@ -1,0 +1,10 @@
+---
+- name: ver variables
+  hosts: all
+  vars:
+  tasks:
+  - name: ver el contenido del directorio /tmp
+    command: ls /tmp
+    register: resultado_ls
+    debugger: always
+  - debug: var=resultado_ls
