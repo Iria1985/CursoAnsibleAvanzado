@@ -1,0 +1,6 @@
+  "ANSIBLE_MODULE:ARGS": {
+    "name": "hello",
+    "path": "/etc/apt",
+    "dest": "/tmp"
+   }
+

@@ -1,0 +1,11 @@
+---
+- name: playbook para probar modulos custom
+  hosts: localhost
+  connection: local
+  tasks:
+   - name: Llamamos a nuestro modulo custom
+     psadeploy:
+       name: apache
+       path: /etc/apache
+     register: salida
+   - debug: var=salida
