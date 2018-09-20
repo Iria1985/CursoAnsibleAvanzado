@@ -1,0 +1,7 @@
+---
+- name:  Prueba de include_tasks
+  hosts: Slaves
+  tasks:
+  - import_tasks: "targets.yaml"
+
+#Con imports hace una compilación previa. Las variables solo son cogidas del vars/vars_files.

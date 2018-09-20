@@ -1,0 +1,9 @@
+[Master]
+master ansible_connection=local
+
+[Slaves]
+target1	ansible_host=10.0.2.4
+target2	ansible_host=10.0.2.5
+
+[all:vars]
+ansible_become=True
