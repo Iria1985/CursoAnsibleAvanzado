@@ -1,6 +1,0 @@
----
-- name: ver variables
-  hosts: Slaves
-  vars:
-  tasks: 
-  - debug: var=variable1
