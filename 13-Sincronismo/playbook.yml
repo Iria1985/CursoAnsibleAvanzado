@@ -1,5 +1,5 @@
 ---
-- name: Practica de tareas asincronas
+- name: Practica de tareas sincronas
   hosts: target1
   vars:
     tiempo_espera: 10
