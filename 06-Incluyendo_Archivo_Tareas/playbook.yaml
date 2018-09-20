@@ -1,0 +1,8 @@
+---
+- name:  Prueba de include_tasks
+  hosts: Slaves
+  tasks:
+  - include_tasks: "{{ ansible_hostname  }}.yaml"
+  - include_tasks: "{{ inventory_hostname }}.yaml"
+
+#Con include va cambiando variables segun se las va encontrando.
